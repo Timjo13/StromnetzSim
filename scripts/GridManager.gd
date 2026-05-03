@@ -75,20 +75,83 @@ func _update_score(delta: float):
 	score = int(_score_acc)
 
 func _update_line_flows():
+	# Reset
+	for line in grid_lines:
+		if not line.tripped:
+			line.set_flow(0.0, 1.0)
+
+	# Undirected adjacency (active lines only)
+	var adj: Dictionary = {}
+	for n in grid_nodes:
+		adj[n] = []
 	for line in grid_lines:
 		if line.tripped or not line.node_a or not line.node_b:
 			continue
-		var power_a = line.node_a.get_power()
-		var power_b = line.node_b.get_power()
-		var flow = 0.0
-		var direction = 1.0
-		if power_a > 0 and power_b <= 0:
-			flow = min(power_a, abs(power_b))
-			direction = 1.0
-		elif power_b > 0 and power_a <= 0:
-			flow = min(power_b, abs(power_a))
-			direction = -1.0
-		line.set_flow(flow, direction)
+		adj[line.node_a].append({"node": line.node_b, "line": line})
+		adj[line.node_b].append({"node": line.node_a, "line": line})
+
+	# Total generation / consumption
+	var total_gen := 0.0
+	var total_con := 0.0
+	for n in grid_nodes:
+		var p = n.get_power()
+		if p > 0.0: total_gen += p
+		else:       total_con -= p
+	if total_gen < 0.01 or total_con < 0.01:
+		return
+
+	# Generators can only supply what they produce; scale demand accordingly
+	var supply_ratio := minf(total_gen / total_con, 1.0)
+
+	# Signed flow accumulator (positive = node_a → node_b)
+	var flow_acc: Dictionary = {}
+	for line in grid_lines:
+		flow_acc[line] = 0.0
+
+	# For each consumer: BFS to all reachable generators, distribute
+	# scaled demand proportionally, route along shortest-path tree.
+	for consumer in grid_nodes:
+		var demand := -consumer.get_power()
+		if demand <= 0.0:
+			continue
+		var served := demand * supply_ratio
+
+		# BFS from consumer outward
+		var parent: Dictionary = {consumer: null}
+		var queue  := [consumer]
+		var qi     := 0
+		var gens   := []
+		var gen_sum := 0.0
+		while qi < queue.size():
+			var curr = queue[qi]; qi += 1
+			var p = curr.get_power()
+			if p > 0.0:
+				gens.append(curr)
+				gen_sum += p
+			for nb in adj.get(curr, []):
+				if not (nb.node in parent):
+					parent[nb.node] = {"node": curr, "line": nb.line}
+					queue.append(nb.node)
+
+		if gens.is_empty() or gen_sum < 0.01:
+			continue  # isolated consumer – no supply reachable
+
+		# Route each generator's proportional share back toward consumer
+		for gen in gens:
+			var power := served * gen.get_power() / gen_sum
+			var curr  = gen
+			while parent.get(curr) != null:
+				var hop := parent[curr]
+				var ln  := hop.line
+				flow_acc[ln] += power if ln.node_a == curr else -power
+				curr = hop.node
+
+	# Push results to lines
+	for line in grid_lines:
+		if line.tripped:
+			continue
+		var f := flow_acc.get(line, 0.0)
+		line.set_flow(abs(f), sign(f) if abs(f) > 0.01 else 1.0)
 
 func _schedule_next_event():
 	_next_event_timer = _rng.randf_range(EVENT_INTERVAL_MIN, EVENT_INTERVAL_MAX)
