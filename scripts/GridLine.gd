@@ -24,11 +24,21 @@ func _ready():
 		add_point(node_a.position)
 		add_point(node_b.position)
 
+func _draw():
+	if get_point_count() < 2 or tripped or current_load < 0.5:
+		return
+	var mid  = (get_point_position(0) + get_point_position(1)) / 2.0
+	var font = ThemeDB.fallback_font
+	var lbl  = "%.0f/%.0fMW" % [current_load, max_capacity]
+	draw_rect(Rect2(mid + Vector2(-23, -10), Vector2(46, 13)), Color(0, 0, 0, 0.60), true)
+	draw_string(font, mid + Vector2(-22, 1), lbl, HORIZONTAL_ALIGNMENT_CENTER, 44, 10, Color.WHITE)
+
 func _process(delta):
 	if not node_a or not node_b:
 		return
 	set_point_position(0, node_a.position)
 	set_point_position(1, node_b.position)
+	queue_redraw()
 
 	if tripped:
 		_blink_timer += delta

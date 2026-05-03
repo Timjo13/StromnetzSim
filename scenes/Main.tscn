@@ -1,11 +1,13 @@
 [gd_scene format=3 uid="uid://cdkljyw5srgv7"]
 
 [ext_resource type="Script" uid="uid://d2diuxqft38oc" path="res://scripts/GridManager.gd" id="1_rvslj"]
-[ext_resource type="PackedScene" uid="uid://k5e71mi8juni" path="res://scenes/GridNode.tscn" id="2_0bbpv"]
+[ext_resource type="Script" uid="uid://c6158oy3360gk" path="res://scripts/Main.gd" id="1_vcsgt"]
 [ext_resource type="Script" uid="uid://c50a1yetu8w8n" path="res://scripts/GridLine.gd" id="2_rarhs"]
 [ext_resource type="Script" uid="uid://b2rgthvvw66vg" path="res://scripts/UI.gd" id="3_0bbpv"]
+[ext_resource type="Script" uid="uid://c1rx2y4b7fhyl" path="res://scripts/NetworkGenerator.gd" id="4_rarhs"]
 
 [node name="Main" type="Node2D" unique_id=1137481436]
+script = ExtResource("1_vcsgt")
 
 [node name="GridManager" type="Node" parent="." unique_id=1959402173]
 script = ExtResource("1_rvslj")
@@ -14,56 +16,24 @@ script = ExtResource("1_rvslj")
 
 [node name="Line_G1_C1" type="Line2D" parent="Lines" unique_id=1622205478 groups=["grid_lines"]]
 script = ExtResource("2_rarhs")
-node_a_path = NodePath("../../Nodes/Generator1")
-node_b_path = NodePath("../../Nodes/Consumer1")
 
 [node name="Line_G1_C2" type="Line2D" parent="Lines" unique_id=996347106 groups=["grid_lines"]]
 script = ExtResource("2_rarhs")
-node_a_path = NodePath("../../Nodes/Generator1")
-node_b_path = NodePath("../../Nodes/Consumer2")
 max_capacity = 15.0
 
 [node name="Line_G2_C1" type="Line2D" parent="Lines" unique_id=133070944 groups=["grid_lines"]]
 script = ExtResource("2_rarhs")
-node_a_path = NodePath("../../Nodes/Generator2")
-node_b_path = NodePath("../../Nodes/Consumer1")
 max_capacity = 15.0
 
 [node name="Line_G2_C3" type="Line2D" parent="Lines" unique_id=2045682854 groups=["grid_lines"]]
 script = ExtResource("2_rarhs")
-node_a_path = NodePath("../../Nodes/Generator2")
-node_b_path = NodePath("../../Nodes/Consumer3")
 max_capacity = 15.0
 
 [node name="Line_C1_C2" type="Line2D" parent="Lines" unique_id=1139237373 groups=["grid_lines"]]
 script = ExtResource("2_rarhs")
-node_a_path = NodePath("../../Nodes/Consumer1")
-node_b_path = NodePath("../../Nodes/Consumer2")
 max_capacity = 10.0
 
 [node name="Nodes" type="Node2D" parent="." unique_id=1105366409]
-
-[node name="Generator1" parent="Nodes" unique_id=2051501399 instance=ExtResource("2_0bbpv")]
-position = Vector2(200, 250)
-power_value = 20.0
-
-[node name="Generator2" parent="Nodes" unique_id=650646203 instance=ExtResource("2_0bbpv")]
-position = Vector2(600, 150)
-power_value = 15.0
-
-[node name="Consumer1" parent="Nodes" unique_id=243652515 instance=ExtResource("2_0bbpv")]
-position = Vector2(400, 200)
-node_type = 1
-
-[node name="Consumer2" parent="Nodes" unique_id=284536480 instance=ExtResource("2_0bbpv")]
-position = Vector2(300, 400)
-node_type = 1
-power_value = 12.0
-
-[node name="Consumer3" parent="Nodes" unique_id=1271442105 instance=ExtResource("2_0bbpv")]
-position = Vector2(550, 380)
-node_type = 1
-power_value = 8.0
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=2082140937]
 script = ExtResource("3_0bbpv")
@@ -90,6 +60,19 @@ offset_top = 80.0
 offset_right = 64.0
 offset_bottom = 103.0
 text = "Stabil"
+
+[node name="ScoreLabel" type="Label" parent="UI" unique_id=100000001]
+offset_left = 20.0
+offset_top = 110.0
+offset_right = 350.0
+offset_bottom = 133.0
+text = "Zeit: 0s  |  Punkte: 0"
+
+[node name="EventLabel" type="Label" parent="UI" unique_id=100000002]
+offset_left = 20.0
+offset_top = 140.0
+offset_right = 550.0
+offset_bottom = 165.0
 
 [node name="GameOverPanel" type="Panel" parent="UI" unique_id=1567433850]
 offset_left = 300.0
@@ -122,6 +105,11 @@ offset_right = 50.0
 offset_bottom = 83.0
 autowrap_mode = 2
 
+[node name="NetworkGenerator" type="Node" parent="." unique_id=861225071]
+script = ExtResource("4_rarhs")
+
 [connection signal="frequency_updated" from="GridManager" to="UI" method="on_frequency_updated"]
 [connection signal="game_over" from="GridManager" to="UI" method="on_game_over"]
 [connection signal="pressed" from="UI/GameOverPanel/Button" to="UI" method="_on_restart_pressed"]
+[connection signal="stats_updated" from="GridManager" to="UI" method="on_stats_updated"]
+[connection signal="event_triggered" from="GridManager" to="UI" method="on_event_triggered"]
