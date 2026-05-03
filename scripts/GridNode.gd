@@ -20,7 +20,6 @@ func _ready():
 	else:
 		_color_on  = Color(0.9, 0.4, 0.2)
 		_color_off = Color(0.4, 0.18, 0.08)
-		input_pickable = false  # Verbraucher sind nicht anklickbar
 	queue_redraw()
 
 func _draw():
@@ -33,12 +32,16 @@ func _draw():
 	draw_string(font, Vector2(-18, -6),  prefix,           HORIZONTAL_ALIGNMENT_CENTER, 36, 14, Color.WHITE)
 	draw_string(font, Vector2(-18,  10), "%.0fMW" % power_value, HORIZONTAL_ALIGNMENT_CENTER, 36, 11, Color(1,1,1,0.75))
 
-func _on_input_event(_viewport, event, _shape_idx):
+func _unhandled_input(event):
+	if node_type != NodeType.GENERATOR:
+		return
 	if event is InputEventMouseButton \
 	and event.pressed \
 	and event.button_index == MOUSE_BUTTON_LEFT:
-		if node_type == NodeType.GENERATOR:
+		var local = to_local(event.position)
+		if local.length() <= RADIUS:
 			toggle()
+			get_viewport().set_input_as_handled()
 
 func toggle():
 	is_active = !is_active

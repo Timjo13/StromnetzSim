@@ -35,3 +35,6 @@ func on_frequency_updated(freq: float):
 
 func on_game_over():
 	game_over_panel.visible = true
+
+func _on_restart_pressed():
+	get_tree().reload_current_scene()
