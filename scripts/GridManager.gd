@@ -5,6 +5,8 @@ const FREQ_RATE          = 0.005
 const FREQ_DANGER        = 1.5
 const EVENT_INTERVAL_MIN = 8.0
 const EVENT_INTERVAL_MAX = 18.0
+const FLUCT_AMP          = 0.15   # ±15 % Verbrauchsschwankung
+const FLUCT_PERIOD       = 60.0   # Sekunden pro vollständigem Zyklus
 
 var frequency:         float = NOMINAL_FREQ
 var game_active:       bool  = true
@@ -16,6 +18,7 @@ var _score_acc:        float = 0.0
 var _next_event_timer: float = 0.0
 var _active_events:    Array = []
 var _rng:              RandomNumberGenerator = RandomNumberGenerator.new()
+var _fluct_phase:      Dictionary = {}   # consumer node → float phase offset
 
 signal frequency_updated(freq: float)
 signal game_over(reason: String)
@@ -29,10 +32,13 @@ func _ready():
 func setup(nodes: Array, lines: Array):
 	grid_nodes = nodes
 	grid_lines = lines
+	_fluct_phase.clear()
 	for n in grid_nodes:
 		if n.state_changed.is_connected(_on_node_changed):
 			n.state_changed.disconnect(_on_node_changed)
 		n.state_changed.connect(_on_node_changed)
+		if n.node_type == 1:   # consumer: assign random phase so peaks don't align
+			_fluct_phase[n] = _rng.randf() * TAU
 	print("GridManager: %d Knoten, %d Leitungen" % [grid_nodes.size(), grid_lines.size()])
 
 func _process(delta: float):
@@ -41,6 +47,7 @@ func _process(delta: float):
 
 	elapsed_time += delta
 	_update_score(delta)
+	_fluctuate_consumers()
 	_tick_events(delta)
 	stats_updated.emit(elapsed_time, score)
 
@@ -152,6 +159,14 @@ func _update_line_flows():
 			continue
 		var f: float = flow_acc.get(line, 0.0)
 		line.set_flow(abs(f), sign(f) if abs(f) > 0.01 else 1.0)
+
+func _fluctuate_consumers():
+	for n in grid_nodes:
+		if n.node_type != 1:
+			continue
+		var phase: float = _fluct_phase.get(n, 0.0)
+		n.demand_mult = 1.0 + FLUCT_AMP * sin(TAU * elapsed_time / FLUCT_PERIOD + phase)
+		n.queue_redraw()
 
 func _schedule_next_event():
 	_next_event_timer = _rng.randf_range(EVENT_INTERVAL_MIN, EVENT_INTERVAL_MAX)

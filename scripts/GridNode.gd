@@ -7,6 +7,7 @@ enum NodeType { GENERATOR, CONSUMER }
 
 var base_power:    float = 0.0   # nominal max (set once in _ready)
 var throttle_step: int   = 5     # 1..STEPS when active
+var demand_mult:   float = 1.0   # fluctuation multiplier, set each frame by GridManager
 var is_active:     bool  = true
 var _color_on:  Color
 var _color_off: Color
@@ -67,10 +68,11 @@ func _draw():
 		# Consumer: show actual / nominal; orange when above nominal (Lastspitze)
 		draw_string(font, Vector2(-18, -6), "V",
 				HORIZONTAL_ALIGNMENT_CENTER, 36, 13, Color.WHITE)
-		var oc = Color(1.0, 0.55, 0.2, 1.0) if power_value > base_power * 1.02 \
+		var actual_con := power_value * demand_mult
+		var oc = Color(1.0, 0.55, 0.2, 1.0) if actual_con > base_power * 1.02 \
 				else Color(1, 1, 1, 0.85)
 		draw_string(font, Vector2(-27, 10),
-				"%.0f/%.0fMW" % [power_value, base_power],
+				"%.0f/%.0fMW" % [actual_con, base_power],
 				HORIZONTAL_ALIGNMENT_CENTER, 54, 10, oc)
 
 func _unhandled_input(event):
@@ -148,4 +150,4 @@ func force_restore(step: int):
 func get_power() -> float:
 	if not is_active:
 		return 0.0
-	return power_value if node_type == NodeType.GENERATOR else -power_value
+	return power_value if node_type == NodeType.GENERATOR else -power_value * demand_mult

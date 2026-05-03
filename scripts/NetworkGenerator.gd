@@ -6,6 +6,7 @@ const NETWORK_NODES = [
 	{"name": "Gen_Kohle",  "type": 0, "power": 30.0, "pos": Vector2(180, 200)},
 	{"name": "Gen_Gas",    "type": 0, "power": 20.0, "pos": Vector2(680, 130)},
 	{"name": "Gen_Wind",   "type": 0, "power": 15.0, "pos": Vector2(900, 300)},
+	{"name": "Gen_Solar",  "type": 0, "power": 20.0, "pos": Vector2(680, 560)},
 	{"name": "Stadt_A",    "type": 1, "power": 18.0, "pos": Vector2(400, 150)},
 	{"name": "Stadt_B",    "type": 1, "power": 14.0, "pos": Vector2(300, 380)},
 	{"name": "Industrie",  "type": 1, "power": 22.0, "pos": Vector2(600, 350)},
@@ -25,6 +26,8 @@ const NETWORK_LINES = [
 	{"from": "Industrie",  "to": "Vorort",    "capacity": 12.0},
 	{"from": "Industrie",  "to": "Bahnhof",   "capacity": 14.0},
 	{"from": "Stadt_B",    "to": "Bahnhof",   "capacity": 10.0},
+	{"from": "Gen_Solar",  "to": "Bahnhof",   "capacity": 15.0},
+	{"from": "Gen_Solar",  "to": "Vorort",    "capacity": 12.0},
 ]
 
 func generate(nodes_container: Node, lines_container: Node) -> Dictionary:
