@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://d2diuxqft38oc" path="res://scripts/GridManager.gd" id="1_rvslj"]
 [ext_resource type="Script" uid="uid://c6158oy3360gk" path="res://scripts/Main.gd" id="1_vcsgt"]
-[ext_resource type="Script" uid="uid://c50a1yetu8w8n" path="res://scripts/GridLine.gd" id="2_rarhs"]
 [ext_resource type="Script" uid="uid://b2rgthvvw66vg" path="res://scripts/UI.gd" id="3_0bbpv"]
 [ext_resource type="Script" uid="uid://c1rx2y4b7fhyl" path="res://scripts/NetworkGenerator.gd" id="4_rarhs"]
 
@@ -13,25 +12,6 @@ script = ExtResource("1_vcsgt")
 script = ExtResource("1_rvslj")
 
 [node name="Lines" type="Node2D" parent="." unique_id=772591713]
-
-[node name="Line_G1_C1" type="Line2D" parent="Lines" unique_id=1622205478 groups=["grid_lines"]]
-script = ExtResource("2_rarhs")
-
-[node name="Line_G1_C2" type="Line2D" parent="Lines" unique_id=996347106 groups=["grid_lines"]]
-script = ExtResource("2_rarhs")
-max_capacity = 15.0
-
-[node name="Line_G2_C1" type="Line2D" parent="Lines" unique_id=133070944 groups=["grid_lines"]]
-script = ExtResource("2_rarhs")
-max_capacity = 15.0
-
-[node name="Line_G2_C3" type="Line2D" parent="Lines" unique_id=2045682854 groups=["grid_lines"]]
-script = ExtResource("2_rarhs")
-max_capacity = 15.0
-
-[node name="Line_C1_C2" type="Line2D" parent="Lines" unique_id=1139237373 groups=["grid_lines"]]
-script = ExtResource("2_rarhs")
-max_capacity = 10.0
 
 [node name="Nodes" type="Node2D" parent="." unique_id=1105366409]
 
@@ -108,8 +88,8 @@ autowrap_mode = 2
 [node name="NetworkGenerator" type="Node" parent="." unique_id=861225071]
 script = ExtResource("4_rarhs")
 
+[connection signal="event_triggered" from="GridManager" to="UI" method="on_event_triggered"]
 [connection signal="frequency_updated" from="GridManager" to="UI" method="on_frequency_updated"]
 [connection signal="game_over" from="GridManager" to="UI" method="on_game_over"]
-[connection signal="pressed" from="UI/GameOverPanel/Button" to="UI" method="_on_restart_pressed"]
 [connection signal="stats_updated" from="GridManager" to="UI" method="on_stats_updated"]
-[connection signal="event_triggered" from="GridManager" to="UI" method="on_event_triggered"]
+[connection signal="pressed" from="UI/GameOverPanel/Button" to="UI" method="_on_restart_pressed"]

@@ -6,11 +6,11 @@ const NETWORK_NODES = [
 	{"name": "Gen_Kohle",  "type": 0, "power": 30.0, "pos": Vector2(180, 200)},
 	{"name": "Gen_Gas",    "type": 0, "power": 20.0, "pos": Vector2(680, 130)},
 	{"name": "Gen_Wind",   "type": 0, "power": 15.0, "pos": Vector2(900, 300)},
-	{"name": "Stadt_A",    "type": 1, "power": 14.0, "pos": Vector2(400, 150)},
-	{"name": "Stadt_B",    "type": 1, "power": 12.0, "pos": Vector2(300, 380)},
-	{"name": "Industrie",  "type": 1, "power": 18.0, "pos": Vector2(600, 350)},
-	{"name": "Vorort",     "type": 1, "power":  6.0, "pos": Vector2(800, 480)},
-	{"name": "Bahnhof",    "type": 1, "power":  8.0, "pos": Vector2(500, 500)},
+	{"name": "Stadt_A",    "type": 1, "power": 18.0, "pos": Vector2(400, 150)},
+	{"name": "Stadt_B",    "type": 1, "power": 14.0, "pos": Vector2(300, 380)},
+	{"name": "Industrie",  "type": 1, "power": 22.0, "pos": Vector2(600, 350)},
+	{"name": "Vorort",     "type": 1, "power":  8.0, "pos": Vector2(800, 480)},
+	{"name": "Bahnhof",    "type": 1, "power": 12.0, "pos": Vector2(500, 500)},
 ]
 
 const NETWORK_LINES = [

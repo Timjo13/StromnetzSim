@@ -30,8 +30,8 @@ func _draw():
 	var mid  = (get_point_position(0) + get_point_position(1)) / 2.0
 	var font = ThemeDB.fallback_font
 	var lbl  = "%.0f/%.0fMW" % [current_load, max_capacity]
-	draw_rect(Rect2(mid + Vector2(-23, -10), Vector2(46, 13)), Color(0, 0, 0, 0.60), true)
-	draw_string(font, mid + Vector2(-22, 1), lbl, HORIZONTAL_ALIGNMENT_CENTER, 44, 10, Color.WHITE)
+	draw_rect(Rect2(mid + Vector2(-28, -10), Vector2(56, 13)), Color(0, 0, 0, 0.60), true)
+	draw_string(font, mid + Vector2(-27, 1), lbl, HORIZONTAL_ALIGNMENT_CENTER, 54, 10, Color.WHITE)
 
 func _process(delta):
 	if not node_a or not node_b:

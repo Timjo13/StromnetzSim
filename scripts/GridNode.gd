@@ -40,9 +40,9 @@ func _draw():
 	if node_type == NodeType.GENERATOR:
 		draw_string(font, Vector2(-18, -6), "G",
 				HORIZONTAL_ALIGNMENT_CENTER, 36, 13, Color.WHITE)
-		draw_string(font, Vector2(-22, 10),
+		draw_string(font, Vector2(-27, 10),
 				"%.0f/%.0fMW" % [abs(get_power()), base_power],
-				HORIZONTAL_ALIGNMENT_CENTER, 44, 10, Color(1, 1, 1, 0.85))
+				HORIZONTAL_ALIGNMENT_CENTER, 54, 10, Color(1, 1, 1, 0.85))
 
 		# Throttle bar – 5 segments
 		for i in range(STEPS):
@@ -69,9 +69,9 @@ func _draw():
 				HORIZONTAL_ALIGNMENT_CENTER, 36, 13, Color.WHITE)
 		var oc = Color(1.0, 0.55, 0.2, 1.0) if power_value > base_power * 1.02 \
 				else Color(1, 1, 1, 0.85)
-		draw_string(font, Vector2(-22, 10),
+		draw_string(font, Vector2(-27, 10),
 				"%.0f/%.0fMW" % [power_value, base_power],
-				HORIZONTAL_ALIGNMENT_CENTER, 44, 10, oc)
+				HORIZONTAL_ALIGNMENT_CENTER, 54, 10, oc)
 
 func _unhandled_input(event):
 	if node_type != NodeType.GENERATOR:
