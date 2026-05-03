@@ -111,10 +111,10 @@ func _update_line_flows():
 	# For each consumer: BFS to all reachable generators, distribute
 	# scaled demand proportionally, route along shortest-path tree.
 	for consumer in grid_nodes:
-		var demand := -consumer.get_power()
+		var demand: float = -consumer.get_power()
 		if demand <= 0.0:
 			continue
-		var served := demand * supply_ratio
+		var served: float = demand * supply_ratio
 
 		# BFS from consumer outward
 		var parent: Dictionary = {consumer: null}
@@ -138,11 +138,11 @@ func _update_line_flows():
 
 		# Route each generator's proportional share back toward consumer
 		for gen in gens:
-			var power := served * gen.get_power() / gen_sum
+			var power: float = served * gen.get_power() / gen_sum
 			var curr  = gen
 			while parent.get(curr) != null:
-				var hop := parent[curr]
-				var ln  := hop.line
+				var hop = parent[curr]
+				var ln  = hop.line
 				flow_acc[ln] += power if ln.node_a == curr else -power
 				curr = hop.node
 
@@ -150,7 +150,7 @@ func _update_line_flows():
 	for line in grid_lines:
 		if line.tripped:
 			continue
-		var f := flow_acc.get(line, 0.0)
+		var f: float = flow_acc.get(line, 0.0)
 		line.set_flow(abs(f), sign(f) if abs(f) > 0.01 else 1.0)
 
 func _schedule_next_event():
